@@ -1,123 +1,73 @@
 import { type NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category");
-    const search = searchParams.get("search");
-    const dietary = searchParams.get("dietary");
-    const sort = searchParams.get("sort") || "popular";
-    const limit = Number.parseInt(searchParams.get("limit") || "20", 10);
-    const offset = Number.parseInt(searchParams.get("offset") || "0", 10);
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params; // Await the async params
 
-    // Main query for fetching meals
-    let query = `
+  try {
+    // Fetch the meal with category name
+    const mealResult = await sql`
       SELECT 
         m.*,
-        c.name as category_name,
-        COALESCE(AVG(r.rating), 0) as avg_rating,
-        COUNT(DISTINCT r.id) as review_count,
-        COUNT(DISTINCT oi.id) as order_count
+        c.name as category_name
       FROM meals m
       LEFT JOIN categories c ON m.category_id = c.id
-      LEFT JOIN reviews r ON m.id = r.meal_id
-      LEFT JOIN order_items oi ON m.id = oi.meal_id
-      WHERE m.is_available = true
+      WHERE m.id = ${id} AND m.is_available = true
     `;
 
-    const params: any[] = [];
-    let paramIndex = 1;
-
-    if (category) {
-      query += ` AND c.slug = $${paramIndex}`;
-      params.push(category);
-      paramIndex++;
+    if (mealResult.length === 0) {
+      return NextResponse.json({ error: "Meal not found" }, { status: 404 });
     }
 
-    if (search) {
-      query += ` AND (m.name ILIKE $${paramIndex} OR m.description ILIKE $${paramIndex})`;
-      params.push(`%${search}%`);
-      paramIndex++;
-    }
+    const meal = mealResult[0];
 
-    if (dietary) {
-      const dietaryFilters = dietary
-        .split(",")
-        .map((f) => f.trim().toLowerCase());
-      if (dietaryFilters.includes("vegetarian"))
-        query += ` AND m.is_vegetarian = true`;
-      if (dietaryFilters.includes("vegan")) query += ` AND m.is_vegan = true`;
-      if (dietaryFilters.includes("gluten-free"))
-        query += ` AND m.is_gluten_free = true`;
-    }
+    // Fetch reviews for this meal
+    const reviews = await sql`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        u.name as user_name,
+        u.email as user_email
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      WHERE r.meal_id = ${id}
+      ORDER BY r.created_at DESC
+    `;
 
-    query += ` GROUP BY m.id, c.name`;
-
-    switch (sort) {
-      case "price_low":
-        query += ` ORDER BY m.price ASC`;
-        break;
-      case "price_high":
-        query += ` ORDER BY m.price DESC`;
-        break;
-      case "rating":
-        query += ` ORDER BY avg_rating DESC`;
-        break;
-      default:
-        query += ` ORDER BY order_count DESC, avg_rating DESC`;
-    }
-
-    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-    params.push(limit, offset);
-
-    const meals = await sql.unsafe(query, params);
-
-    // Count query for pagination - properly indexed parameters
-    let countQuery = `SELECT COUNT(*) as total FROM meals m WHERE m.is_available = true`;
-    const countParams: any[] = [];
-    let countParamIndex = 1;
-
-    if (category) {
-      countQuery += ` AND m.category_id IN (SELECT id FROM categories WHERE slug = $${countParamIndex})`;
-      countParams.push(category);
-      countParamIndex++;
-    }
-
-    if (search) {
-      countQuery += ` AND (m.name ILIKE $${countParamIndex} OR m.description ILIKE $${countParamIndex})`;
-      countParams.push(`%${search}%`);
-      countParamIndex++;
-    }
-
-    if (dietary) {
-      const dietaryFilters = dietary
-        .split(",")
-        .map((f) => f.trim().toLowerCase());
-      if (dietaryFilters.includes("vegetarian"))
-        countQuery += ` AND m.is_vegetarian = true`;
-      if (dietaryFilters.includes("vegan"))
-        countQuery += ` AND m.is_vegan = true`;
-      if (dietaryFilters.includes("gluten-free"))
-        countQuery += ` AND m.is_gluten_free = true`;
-    }
-
-    const countResult = await sql.unsafe(countQuery, countParams);
-    const total = Number(countResult[0]?.total || 0);
+    // Fetch related meals (same category, excluding current meal)
+    const relatedMeals = await sql`
+      SELECT 
+        m.id,
+        m.name,
+        m.price,
+        m.image_url,
+        m.description,
+        COALESCE(AVG(r.rating), 0) as avg_rating,
+        COUNT(DISTINCT r.id) as review_count
+      FROM meals m
+      LEFT JOIN reviews r ON m.id = r.meal_id
+      WHERE m.category_id = ${meal.category_id}
+        AND m.id != ${id}
+        AND m.is_available = true
+      GROUP BY m.id
+      ORDER BY avg_rating DESC, review_count DESC
+      LIMIT 6
+    `;
 
     return NextResponse.json({
-      meals,
-      pagination: {
-        total,
-        limit,
-        offset,
-        hasMore: offset + limit < total,
-      },
+      meal,
+      reviews,
+      relatedMeals,
     });
   } catch (error) {
-    console.error("[v0] Error fetching meals:", error);
+    console.error("[API] Error fetching meal by id:", error);
     return NextResponse.json(
-      { error: "Failed to fetch meals" },
+      { error: "Failed to fetch meal" },
       { status: 500 }
     );
   }

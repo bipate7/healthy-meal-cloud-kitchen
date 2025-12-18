@@ -6,6 +6,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
 
-export default nextConfig
+  // Disable Turbopack only for production builds (Vercel)
+  // Local `next dev` can still use Turbopack for speed
+  ...(process.env.NODE_ENV === "production" && { turbopack: false }),
+};
+
+export default nextConfig;

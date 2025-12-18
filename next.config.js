@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: false, // Use reliable Webpack instead of buggy Turbopack
+  turbopack: false, // This forces Webpack for builds (Turbopack remains optional for local dev)
 };
 
 module.exports = nextConfig;

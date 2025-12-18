@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const limit = Number.parseInt(searchParams.get("limit") || "20", 10);
     const offset = Number.parseInt(searchParams.get("offset") || "0", 10);
 
-    // Main meals query
+    // Main query for fetching meals
     let query = `
       SELECT 
         m.*,
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 
     const meals = await sql.unsafe(query, params);
 
-    // Count query - fixed parameter indexing
+    // Count query for pagination - properly indexed parameters
     let countQuery = `SELECT COUNT(*) as total FROM meals m WHERE m.is_available = true`;
     const countParams: any[] = [];
     let countParamIndex = 1;

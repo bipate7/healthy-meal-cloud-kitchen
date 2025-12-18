@@ -7,9 +7,8 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // Disable Turbopack only for production builds (Vercel)
-  // Local `next dev` can still use Turbopack for speed
-  ...(process.env.NODE_ENV === "production" && { turbopack: false }),
+  // Disable Turbopack for production builds (Vercel) to avoid the previous bug
+  turbopack: false,
 };
 
 export default nextConfig;

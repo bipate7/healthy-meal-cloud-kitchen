@@ -67,8 +67,9 @@ export async function getCurrentUser(): Promise<User | null> {
     FROM users
     WHERE id = ${session.userId}
   `;
+
+  // Safe and clean: check length and cast once
   return result.length > 0 ? (result[0] as User) : null;
-  return result[0] || null;
 }
 
 export async function logout() {

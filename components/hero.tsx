@@ -97,7 +97,7 @@ export function Hero() {
                 className="w-full sm:w-auto text-base h-12 sm:h-14 px-6 sm:px-8 bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 shadow-lg hover:shadow-2xl shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 hover:scale-105"
                 asChild
               >
-                <Link href="/menu">Browse Menu</Link>
+                <Link href="/signup">Get Started</Link>
               </Button>
               <Button
                 size="lg"

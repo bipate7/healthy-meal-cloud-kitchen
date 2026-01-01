@@ -48,11 +48,6 @@ export function MealCard({ meal, isFavorite: initialFavorite, userId }: MealCard
   }
 
   async function handleAddToCart() {
-    if (!userId) {
-      router.push("/login")
-      return
-    }
-
     setLoading(true)
     await addToCart(meal.id, 1)
     setLoading(false)

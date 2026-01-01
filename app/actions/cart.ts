@@ -10,11 +10,7 @@ interface CartItem {
 }
 
 export async function addToCart(mealId: number, quantity: number) {
-  const user = await getCurrentUser()
-  if (!user) {
-    return { error: "Unauthorized" }
-  }
-
+  // Allow guest users to add to cart using cookies
   try {
     const cookieStore = await cookies()
     const cartData = cookieStore.get("cart")?.value

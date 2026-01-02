@@ -1,3 +1,6 @@
+-- Clean up existing data and reset sequences
+TRUNCATE TABLE users, categories, meals, subscription_plans RESTART IDENTITY CASCADE;
+
 -- Insert sample categories
 INSERT INTO categories (name, description, image_url) VALUES
   ('Low Carb', 'Delicious low-carb meals for a healthy lifestyle', '/placeholder.svg?height=200&width=300'),
@@ -10,7 +13,7 @@ INSERT INTO categories (name, description, image_url) VALUES
 INSERT INTO meals (name, description, category_id, price, image_url, calories, protein, carbs, fat, fiber, ingredients, allergens, is_vegetarian, is_vegan, is_gluten_free, preparation_time, serving_size) VALUES
   ('Grilled Chicken Bowl', 'Tender grilled chicken with quinoa, roasted vegetables, and tahini dressing', 2, 12.99, '/placeholder.svg?height=400&width=600', 450, 42, 38, 15, 8, ARRAY['Chicken breast', 'Quinoa', 'Broccoli', 'Bell peppers', 'Tahini', 'Lemon'], ARRAY['Sesame'], FALSE, FALSE, TRUE, 25, '400g'),
   ('Zucchini Noodle Carbonara', 'Low-carb zucchini noodles with creamy carbonara sauce', 1, 10.99, '/placeholder.svg?height=400&width=600', 320, 18, 12, 22, 4, ARRAY['Zucchini', 'Eggs', 'Parmesan', 'Turkey bacon', 'Garlic'], ARRAY['Dairy', 'Eggs'], FALSE, FALSE, TRUE, 20, '350g'),
-  ('Buddha Bowl', 'Colorful plant-based bowl with chickpeas, hummus, and fresh veggies', 3, 11.99, '/placeholder.svg?height=400&width=600', 380, 15, 52, 12, 12, ARRAY['Chickpeas', 'Quinoa', 'Sweet potato', 'Kale', 'Hummus', 'Tahini'], ARRAY[], TRUE, TRUE, TRUE, 30, '450g'),
+  ('Buddha Bowl', 'Colorful plant-based bowl with chickpeas, hummus, and fresh veggies', 3, 11.99, '/placeholder.svg?height=400&width=600', 380, 15, 52, 12, 12, ARRAY['Chickpeas', 'Quinoa', 'Sweet potato', 'Kale', 'Hummus', 'Tahini'], ARRAY[]::TEXT[], TRUE, TRUE, TRUE, 30, '450g'),
   ('Salmon with Asparagus', 'Pan-seared salmon with roasted asparagus and cauliflower mash', 1, 15.99, '/placeholder.svg?height=400&width=600', 420, 38, 18, 24, 6, ARRAY['Salmon fillet', 'Asparagus', 'Cauliflower', 'Olive oil', 'Garlic', 'Lemon'], ARRAY['Fish'], FALSE, FALSE, TRUE, 25, '400g'),
   ('Keto Meatballs', 'Juicy grass-fed beef meatballs with zucchini and marinara', 4, 13.99, '/placeholder.svg?height=400&width=600', 390, 32, 14, 25, 5, ARRAY['Grass-fed beef', 'Almond flour', 'Zucchini', 'Tomatoes', 'Basil', 'Garlic'], ARRAY['Tree nuts'], FALSE, FALSE, TRUE, 30, '380g'),
   ('Teriyaki Tofu Stir Fry', 'Crispy tofu with mixed vegetables in homemade teriyaki sauce', 3, 10.99, '/placeholder.svg?height=400&width=600', 350, 20, 42, 10, 7, ARRAY['Tofu', 'Broccoli', 'Carrots', 'Snow peas', 'Teriyaki sauce', 'Sesame'], ARRAY['Soy', 'Sesame'], TRUE, TRUE, FALSE, 20, '400g'),

@@ -1,13 +1,17 @@
 "use client"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, Flame, Clock } from "lucide-react"
+import { Star, Flame, Clock, Loader2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { addToCart } from "@/app/actions/cart"
+import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
 
-const meals = [
+const defaultMeals = [
   {
     id: 1,
     name: "Grilled Tandoori Salmon",
@@ -66,8 +70,61 @@ const meals = [
   },
 ]
 
-export function MenuPreview() {
+interface MenuPreviewProps {
+  initialMeals?: any[]
+}
+
+export function MenuPreview({ initialMeals }: MenuPreviewProps) {
+  const { toast } = useToast()
+  const router = useRouter()
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [addingId, setAddingId] = useState<number | null>(null)
+
+  const meals = initialMeals && initialMeals.length > 0 
+    ? initialMeals.map(m => ({
+        id: m.id,
+        name: m.name,
+        description: m.description,
+        image: m.image_url,
+        calories: m.calories,
+        protein: m.protein,
+        prepTime: m.preparation_time,
+        rating: typeof m.avg_rating === 'number' ? m.avg_rating : parseFloat(m.avg_rating || '4.5'),
+        reviews: typeof m.review_count === 'number' ? m.review_count : parseInt(m.review_count || '0'),
+        tags: [m.category_name || "Healthy"],
+        category: m.category_name || "Main",
+        price: m.price
+      }))
+    : defaultMeals
+
+  const handleAddToCart = async (meal: any) => {
+    setAddingId(meal.id)
+    try {
+      const res = await addToCart(meal.id, 1)
+      if (res.success) {
+        toast({
+          title: "Added to cart",
+          description: `${meal.name} added to your cart.`,
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add to cart.",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "Something went wrong.",
+        variant: "destructive"
+      })
+    } finally {
+      setAddingId(null)
+    }
+  }
 
   return (
     <section
@@ -127,7 +184,7 @@ export function MenuPreview() {
                 <p className="text-xs md:text-sm text-muted-foreground mb-3 line-clamp-2">{meal.description}</p>
 
                 <div className="flex gap-2 mb-3 flex-wrap">
-                  {meal.tags.map((tag) => (
+                  {meal.tags.map((tag: string) => (
                     <Badge
                       key={tag}
                       variant="secondary"
@@ -158,8 +215,19 @@ export function MenuPreview() {
                 <div className="mt-2 text-lg font-bold text-primary">₹{meal.price}</div>
               </CardContent>
               <CardFooter className="p-3 md:p-4 pt-0">
-                <Button className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 transition-all duration-300 group-hover:shadow-lg text-sm md:text-base">
-                  Add to Cart
+                <Button 
+                  className="w-full bg-gradient-to-r from-primary to-orange-500 hover:from-primary/90 hover:to-orange-500/90 transition-all duration-300 group-hover:shadow-lg text-sm md:text-base"
+                  onClick={() => handleAddToCart(meal)}
+                  disabled={addingId === meal.id}
+                >
+                  {addingId === meal.id ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Adding...
+                    </>
+                  ) : (
+                    "Add to Cart"
+                  )}
                 </Button>
               </CardFooter>
             </Card>

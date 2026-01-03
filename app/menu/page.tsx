@@ -1,20 +1,31 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Star, Flame, Clock, Search, Filter, Heart, ShoppingCart } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Header } from "@/components/header"
+import { useState, useMemo, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Star,
+  Flame,
+  Clock,
+  Search,
+  Filter,
+  Heart,
+  ShoppingCart,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Header } from "@/components/header";
 
 const allMeals = [
   {
     id: 1,
     name: "Grilled Tandoori Salmon",
-    description: "Fresh salmon marinated in yogurt, spices with quinoa and roasted vegetables",
+    description:
+      "Fresh salmon marinated in yogurt, spices with quinoa and roasted vegetables",
     image: "/grilled-salmon-bowl.jpg",
     calories: 520,
     protein: 42,
@@ -29,7 +40,8 @@ const allMeals = [
   {
     id: 2,
     name: "Healthy Chicken Tikka Bowl",
-    description: "Tandoori chicken tikka with brown rice, chickpeas and mint chutney",
+    description:
+      "Tandoori chicken tikka with brown rice, chickpeas and mint chutney",
     image: "/mediterranean-chicken.jpg",
     calories: 480,
     protein: 38,
@@ -44,7 +56,8 @@ const allMeals = [
   {
     id: 3,
     name: "Paneer Tikka Masala Bowl",
-    description: "Grilled paneer in rich tomato gravy with brown rice and salad",
+    description:
+      "Grilled paneer in rich tomato gravy with brown rice and salad",
     image: "/thai-tofu-curry.jpg",
     calories: 440,
     protein: 22,
@@ -59,7 +72,8 @@ const allMeals = [
   {
     id: 4,
     name: "Protein Poha Bowl",
-    description: "Healthy poha with sprouts, peanuts, vegetables and boiled eggs",
+    description:
+      "Healthy poha with sprouts, peanuts, vegetables and boiled eggs",
     image: "/breakfast-power-bowl.jpg",
     calories: 380,
     protein: 28,
@@ -74,7 +88,8 @@ const allMeals = [
   {
     id: 5,
     name: "Chicken Chettinad with Millet",
-    description: "Spicy South Indian chicken curry with healthy finger millet roti",
+    description:
+      "Spicy South Indian chicken curry with healthy finger millet roti",
     image: "/teriyaki-beef-stir-fry.jpg",
     calories: 510,
     protein: 36,
@@ -134,7 +149,8 @@ const allMeals = [
   {
     id: 9,
     name: "Healthy Idli Sambar Bowl",
-    description: "Steamed idli with protein-rich sambar, coconut chutney and vegetables",
+    description:
+      "Steamed idli with protein-rich sambar, coconut chutney and vegetables",
     image: "/poke-bowl-tuna-fresh.jpg",
     calories: 380,
     protein: 24,
@@ -164,7 +180,8 @@ const allMeals = [
   {
     id: 11,
     name: "Sprouted Moong Salad Bowl",
-    description: "Protein-rich sprouted moong with vegetables, lemon and spices",
+    description:
+      "Protein-rich sprouted moong with vegetables, lemon and spices",
     image: "/acai-bowl-granola-berries.jpg",
     calories: 290,
     protein: 18,
@@ -179,7 +196,8 @@ const allMeals = [
   {
     id: 12,
     name: "Grilled Chicken Seekh Bowl",
-    description: "Grilled chicken seekh kebab with millet roti and cucumber raita",
+    description:
+      "Grilled chicken seekh kebab with millet roti and cucumber raita",
     image: "/lemon-herb-chicken-grilled.jpg",
     calories: 450,
     protein: 42,
@@ -194,7 +212,8 @@ const allMeals = [
   {
     id: 13,
     name: "Bengali Fish Curry Bowl",
-    description: "Traditional Bengali fish curry with mustard, served with brown rice",
+    description:
+      "Traditional Bengali fish curry with mustard, served with brown rice",
     image: "/teriyaki-beef-stir-fry.jpg",
     calories: 480,
     protein: 35,
@@ -236,50 +255,195 @@ const allMeals = [
     category: "Lunch",
     cuisine: "North Indian",
   },
-]
+  {
+    id: 16,
+    name: "Masala Dosa Plate",
+    description: "Crispy dosa with sambar and coconut chutney",
+    image: "/poke-bowl-tuna-fresh.jpg",
+    calories: 390,
+    protein: 14,
+    prepTime: 5,
+    rating: 4.7,
+    reviews: 210,
+    price: 179,
+    tags: ["Vegetarian", "Probiotic"],
+    category: "Breakfast",
+    cuisine: "South Indian",
+  },
+  {
+    id: 17,
+    name: "Veg Biryani Bowl",
+    description: "Aromatic basmati rice with mixed veggies and spices",
+    image: "/creamy-mushroom-risotto.png",
+    calories: 520,
+    protein: 16,
+    prepTime: 6,
+    rating: 4.6,
+    reviews: 158,
+    price: 219,
+    tags: ["Vegetarian", "Comfort Food"],
+    category: "Lunch",
+    cuisine: "North Indian",
+  },
+  {
+    id: 18,
+    name: "Chicken Biryani",
+    description: "Hyderabadi style biryani with tender chicken pieces",
+    image: "/teriyaki-beef-stir-fry.jpg",
+    calories: 610,
+    protein: 34,
+    prepTime: 7,
+    rating: 4.8,
+    reviews: 312,
+    price: 349,
+    tags: ["High Protein", "Spicy"],
+    category: "Dinner",
+    cuisine: "Hyderabadi",
+  },
+  {
+    id: 19,
+    name: "Goan Fish Curry",
+    description: "Tangy coconut-based curry with steamed rice",
+    image: "/shrimp-tacos-chipotle.jpg",
+    calories: 480,
+    protein: 30,
+    prepTime: 6,
+    rating: 4.7,
+    reviews: 167,
+    price: 339,
+    tags: ["High Protein", "Low Carb"],
+    category: "Dinner",
+    cuisine: "Goan",
+  },
+  {
+    id: 20,
+    name: "Rajasthani Dal Baati",
+    description: "Traditional dal baati churma with ghee",
+    image: "/thai-tofu-curry.jpg",
+    calories: 540,
+    protein: 20,
+    prepTime: 6,
+    rating: 4.6,
+    reviews: 142,
+    price: 299,
+    tags: ["Vegetarian", "Traditional"],
+    category: "Lunch",
+    cuisine: "Rajasthani",
+  },
+  {
+    id: 21,
+    name: "Idli Vada Sambar",
+    description: "Soft idlis and crispy vadas with hot sambar",
+    image: "/breakfast-power-bowl.jpg",
+    calories: 360,
+    protein: 16,
+    prepTime: 5,
+    rating: 4.8,
+    reviews: 233,
+    price: 169,
+    tags: ["Vegetarian", "Probiotic"],
+    category: "Breakfast",
+    cuisine: "South Indian",
+  },
+  {
+    id: 22,
+    name: "Chole Bhature Lite",
+    description: "Flavorful chickpeas with lighter bhature",
+    image: "/lemon-herb-chicken-grilled.jpg",
+    calories: 520,
+    protein: 18,
+    prepTime: 6,
+    rating: 4.7,
+    reviews: 198,
+    price: 219,
+    tags: ["Vegetarian", "Comfort Food"],
+    category: "Lunch",
+    cuisine: "Punjabi",
+  },
+  {
+    id: 23,
+    name: "Paneer Butter Masala",
+    description: "Creamy paneer curry with buttery goodness",
+    image: "/mediterranean-chicken.jpg",
+    calories: 510,
+    protein: 22,
+    prepTime: 6,
+    rating: 4.8,
+    reviews: 287,
+    price: 289,
+    tags: ["Vegetarian", "High Protein"],
+    category: "Dinner",
+    cuisine: "North Indian",
+  },
+];
 
-const categories = ["All", "Breakfast", "Lunch", "Dinner"]
-const dietaryTags = ["All", "High Protein", "Vegetarian", "Vegan", "Low Carb", "Spicy", "Low Fat"]
+const categories = ["All", "Breakfast", "Lunch", "Dinner"];
+const dietaryTags = [
+  "All",
+  "High Protein",
+  "Vegetarian",
+  "Vegan",
+  "Low Carb",
+  "Spicy",
+  "Low Fat",
+];
 const cuisineTypes = [
   "All",
   "North Indian",
   "South Indian",
-  "Bengali",
-  "Gujarati",
   "Punjabi",
+  "Gujarati",
+  "Bengali",
   "Kashmiri",
+  "Maharashtrian",
+  "Hyderabadi",
+  "Goan",
+  "Andhra",
+  "Telugu",
   "Fusion",
   "Healthy Indian",
-]
+  "Street Food",
+  "Mediterranean",
+  "Italian",
+  "Chinese",
+  "Continental",
+];
 
 export default function MenuPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedTag, setSelectedTag] = useState("All")
-  const [selectedCuisine, setSelectedCuisine] = useState("All")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [favorites, setFavorites] = useState<number[]>([])
-  const [cart, setCart] = useState<number[]>([])
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedTag, setSelectedTag] = useState("All");
+  const [selectedCuisine, setSelectedCuisine] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [cart, setCart] = useState<number[]>([]);
+  const [showAllCuisines, setShowAllCuisines] = useState(false);
+  const cuisineScrollRef = useRef<HTMLDivElement | null>(null);
 
   const filteredMeals = useMemo(() => {
     return allMeals.filter((meal) => {
-      const matchesCategory = selectedCategory === "All" || meal.category === selectedCategory
-      const matchesTag = selectedTag === "All" || meal.tags.includes(selectedTag)
-      const matchesCuisine = selectedCuisine === "All" || meal.cuisine === selectedCuisine
+      const matchesCategory =
+        selectedCategory === "All" || meal.category === selectedCategory;
+      const matchesTag =
+        selectedTag === "All" || meal.tags.includes(selectedTag);
+      const matchesCuisine =
+        selectedCuisine === "All" || meal.cuisine === selectedCuisine;
       const matchesSearch =
         meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        meal.description.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesCategory && matchesTag && matchesCuisine && matchesSearch
-    })
-  }, [selectedCategory, selectedTag, selectedCuisine, searchQuery])
+        meal.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesTag && matchesCuisine && matchesSearch;
+    });
+  }, [selectedCategory, selectedTag, selectedCuisine, searchQuery]);
 
   const toggleFavorite = (id: number) => {
-    setFavorites((prev) => (prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]))
-  }
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+    );
+  };
 
   const addToCart = (id: number) => {
-    setCart((prev) => [...prev, id])
-    console.log("[v0] Added to cart:", id)
-  }
+    setCart((prev) => [...prev, id]);
+    console.log("[v0] Added to cart:", id);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -294,7 +458,8 @@ export default function MenuPage() {
               Explore Our Full Menu
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8">
-              Discover delicious, nutritious Indian meals crafted by our expert chefs
+              Discover delicious, nutritious Indian meals crafted by our expert
+              chefs
             </p>
           </div>
         </div>
@@ -335,21 +500,67 @@ export default function MenuPage() {
             ))}
           </div>
 
-          {/* Cuisine Filter */}
-          <div className="flex flex-wrap gap-2 justify-center mb-3">
-            <span className="text-sm text-muted-foreground self-center mr-2">Cuisine:</span>
-            {cuisineTypes.map((cuisine) => (
-              <Badge
-                key={cuisine}
-                variant={selectedCuisine === cuisine ? "default" : "outline"}
-                onClick={() => setSelectedCuisine(cuisine)}
-                className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
-                  selectedCuisine === cuisine ? "bg-orange-600 hover:bg-orange-700" : "hover:bg-orange-600/10"
-                }`}
-              >
-                {cuisine}
-              </Badge>
-            ))}
+          {/* Cuisine Filter (Scrollable with Controls) */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Cuisine:</span>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() =>
+                    cuisineScrollRef.current?.scrollBy({
+                      left: -240,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() =>
+                    cuisineScrollRef.current?.scrollBy({
+                      left: 240,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAllCuisines((v) => !v)}
+                  className="ml-2"
+                >
+                  {showAllCuisines ? "Less" : "More"}
+                </Button>
+              </div>
+            </div>
+            <div
+              ref={cuisineScrollRef}
+              className="overflow-x-auto whitespace-nowrap px-2 py-1"
+            >
+              {(showAllCuisines ? cuisineTypes : cuisineTypes.slice(0, 10)).map(
+                (cuisine) => (
+                  <Badge
+                    key={cuisine}
+                    variant={
+                      selectedCuisine === cuisine ? "default" : "outline"
+                    }
+                    onClick={() => setSelectedCuisine(cuisine)}
+                    className={`inline-block mr-2 mb-2 cursor-pointer transition-all duration-300 hover:scale-105 ${
+                      selectedCuisine === cuisine
+                        ? "bg-orange-600 hover:bg-orange-700"
+                        : "hover:bg-orange-600/10"
+                    }`}
+                  >
+                    {cuisine}
+                  </Badge>
+                )
+              )}
+            </div>
           </div>
 
           {/* Dietary Tags */}
@@ -361,7 +572,9 @@ export default function MenuPage() {
                 variant={selectedTag === tag ? "default" : "outline"}
                 onClick={() => setSelectedTag(tag)}
                 className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
-                  selectedTag === tag ? "bg-primary hover:bg-primary/90" : "hover:bg-primary/10"
+                  selectedTag === tag
+                    ? "bg-primary hover:bg-primary/90"
+                    : "hover:bg-primary/10"
                 }`}
               >
                 {tag}
@@ -381,13 +594,15 @@ export default function MenuPage() {
         <div className="container mx-auto px-4">
           {filteredMeals.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-xl text-muted-foreground mb-4">No meals found matching your criteria</p>
+              <p className="text-xl text-muted-foreground mb-4">
+                No meals found matching your criteria
+              </p>
               <Button
                 onClick={() => {
-                  setSelectedCategory("All")
-                  setSelectedTag("All")
-                  setSelectedCuisine("All")
-                  setSearchQuery("")
+                  setSelectedCategory("All");
+                  setSelectedTag("All");
+                  setSelectedCuisine("All");
+                  setSearchQuery("");
                 }}
               >
                 Clear Filters
@@ -427,7 +642,11 @@ export default function MenuPage() {
                       }`}
                       onClick={() => toggleFavorite(meal.id)}
                     >
-                      <Heart className={`h-4 w-4 ${favorites.includes(meal.id) ? "fill-current" : ""}`} />
+                      <Heart
+                        className={`h-4 w-4 ${
+                          favorites.includes(meal.id) ? "fill-current" : ""
+                        }`}
+                      />
                     </Button>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
@@ -435,11 +654,17 @@ export default function MenuPage() {
                     <h3 className="font-semibold text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors">
                       {meal.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{meal.description}</p>
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {meal.description}
+                    </p>
 
                     <div className="flex gap-2 mb-3 flex-wrap">
                       {meal.tags.slice(0, 2).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
@@ -460,9 +685,13 @@ export default function MenuPage() {
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-medium">{meal.rating}</span>
-                        <span className="text-sm text-muted-foreground">({meal.reviews})</span>
+                        <span className="text-sm text-muted-foreground">
+                          ({meal.reviews})
+                        </span>
                       </div>
-                      <span className="text-xl font-bold text-primary">₹{meal.price}</span>
+                      <span className="text-xl font-bold text-primary">
+                        ₹{meal.price}
+                      </span>
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 pt-0 gap-2">
@@ -507,8 +736,13 @@ export default function MenuPage() {
           }
         }
         @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
         .animate-gradient {
           background-size: 200% 200%;
@@ -516,5 +750,5 @@ export default function MenuPage() {
         }
       `}</style>
     </div>
-  )
+  );
 }

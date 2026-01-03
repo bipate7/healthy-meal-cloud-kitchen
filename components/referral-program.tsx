@@ -98,6 +98,15 @@ export function ReferralProgram() {
               <p className="text-gray-600">Available Credit</p>
             </Card>
           </div>
+          
+          <div className="text-center mt-10">
+            <Button variant="outline" className="mx-auto" asChild>
+              <a href="/referrals">Learn More</a>
+            </Button>
+            <Button className="ml-3 bg-primary" asChild>
+              <a href="/signup">Start Referring</a>
+            </Button>
+          </div>
         </div>
       </div>
     </section>

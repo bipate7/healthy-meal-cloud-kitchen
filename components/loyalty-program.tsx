@@ -99,8 +99,8 @@ export function LoyaltyProgram() {
                 <h3 className="text-2xl font-bold mb-2">Join Free Today</h3>
                 <p className="text-purple-100">Start earning rewards with your first order</p>
               </div>
-              <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
-                Sign Up Now
+              <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100" asChild>
+                <a href="/signup">Sign Up Now</a>
               </Button>
             </div>
           </Card>

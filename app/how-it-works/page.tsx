@@ -1,35 +1,38 @@
-"use client"
+"use client";
 
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ShoppingCart, ChefHat, Truck, Heart, Check } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ShoppingCart, ChefHat, Truck, Heart, Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 export default function HowItWorksPage() {
-  const [visibleSteps, setVisibleSteps] = useState<number[]>([])
-  const stepsRef = useRef<(HTMLDivElement | null)[]>([])
+  const [visibleSteps, setVisibleSteps] = useState<number[]>([]);
+  const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const index = Number.parseInt(entry.target.getAttribute("data-index") || "0")
-            setVisibleSteps((prev) => [...new Set([...prev, index])])
+            const index = Number.parseInt(
+              entry.target.getAttribute("data-index") || "0"
+            );
+            setVisibleSteps((prev) => [...new Set([...prev, index])]);
           }
-        })
+        });
       },
-      { threshold: 0.2 },
-    )
+      { threshold: 0.2 }
+    );
 
     stepsRef.current.forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
+      if (ref) observer.observe(ref);
+    });
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   const steps = [
     {
@@ -38,7 +41,11 @@ export default function HowItWorksPage() {
       description:
         "Browse our menu of nutritionist-approved meals and select what you love. Filter by dietary preferences, cuisine type, or nutritional goals.",
       color: "from-primary to-emerald-500",
-      features: ["100+ meal options", "Custom dietary filters", "Save favorites"],
+      features: [
+        "100+ meal options",
+        "Custom dietary filters",
+        "Save favorites",
+      ],
     },
     {
       icon: ChefHat,
@@ -46,7 +53,11 @@ export default function HowItWorksPage() {
       description:
         "Our expert chefs prepare your meals with premium ingredients in our hygiene-certified cloud kitchens. Every meal is cooked fresh to order.",
       color: "from-orange-500 to-amber-500",
-      features: ["FSSAI certified kitchens", "Fresh ingredients daily", "No preservatives"],
+      features: [
+        "FSSAI certified kitchens",
+        "Fresh ingredients daily",
+        "No preservatives",
+      ],
     },
     {
       icon: Truck,
@@ -54,7 +65,11 @@ export default function HowItWorksPage() {
       description:
         "Your meals are packed in eco-friendly containers and delivered to your doorstep within 30-45 minutes, ensuring maximum freshness.",
       color: "from-yellow-500 to-orange-400",
-      features: ["30-45 min delivery", "Real-time tracking", "Eco-friendly packaging"],
+      features: [
+        "30-45 min delivery",
+        "Real-time tracking",
+        "Eco-friendly packaging",
+      ],
     },
     {
       icon: Heart,
@@ -64,7 +79,13 @@ export default function HowItWorksPage() {
       color: "from-pink-500 to-rose-500",
       features: ["Easy reordering", "Meal history", "Loyalty rewards"],
     },
-  ]
+  ];
+  const stepImages = [
+    "/grilled-salmon-bowl.jpg",
+    "/indian-male-chef.jpg",
+    "/mumbai-map-location.jpg",
+    "/acai-bowl-granola-berries.jpg",
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,7 +102,8 @@ export default function HowItWorksPage() {
               </span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              From farm to table in four simple steps. Healthy eating has never been this easy!
+              From farm to table in four simple steps. Healthy eating has never
+              been this easy!
             </p>
           </div>
         </section>
@@ -94,13 +116,15 @@ export default function HowItWorksPage() {
                 <div
                   key={index}
                   ref={(el) => {
-                    stepsRef.current[index] = el
+                    stepsRef.current[index] = el;
                   }}
                   data-index={index}
                   className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center ${
                     index % 2 === 1 ? "md:flex-row-reverse" : ""
                   } transition-all duration-700 ${
-                    visibleSteps.includes(index) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                    visibleSteps.includes(index)
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-8"
                   }`}
                 >
                   <div className={`${index % 2 === 1 ? "md:order-2" : ""}`}>
@@ -115,25 +139,34 @@ export default function HowItWorksPage() {
                       >
                         {String(index + 1).padStart(2, "0")}
                       </div>
-                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2">{step.title}</h2>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2">
+                        {step.title}
+                      </h2>
                     </div>
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6">
                       {step.description}
                     </p>
                     <ul className="space-y-2">
                       {step.features.map((feature, i) => (
-                        <li key={i} className="flex items-center gap-2 text-sm md:text-base">
-                          <Check className={`h-5 w-5 text-primary flex-shrink-0`} />
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-sm md:text-base"
+                        >
+                          <Check
+                            className={`h-5 w-5 text-primary flex-shrink-0`}
+                          />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div className={`${index % 2 === 1 ? "md:order-1" : ""}`}>
-                    <img
-                      src={`/.jpg?height=400&width=600&query=${step.title.toLowerCase()} healthy meal delivery indian`}
+                    <Image
+                      src={stepImages[index] || "/placeholder.jpg"}
                       alt={step.title}
-                      className="rounded-2xl shadow-2xl w-full hover:scale-105 transition-transform duration-500"
+                      width={600}
+                      height={400}
+                      className="rounded-2xl shadow-2xl w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                 </div>
@@ -179,8 +212,12 @@ export default function HowItWorksPage() {
                   key={i}
                   className="bg-background p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">{benefit.title}</h3>
-                  <p className="text-sm md:text-base text-muted-foreground">{benefit.desc}</p>
+                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-muted-foreground">
+                    {benefit.desc}
+                  </p>
                 </div>
               ))}
             </div>
@@ -190,9 +227,12 @@ export default function HowItWorksPage() {
         {/* CTA Section */}
         <section className="container mx-auto px-4 py-12 md:py-16 text-center">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6">Ready to Get Started?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6">
+              Ready to Get Started?
+            </h2>
             <p className="text-base md:text-lg text-muted-foreground mb-6 md:mb-8 px-4">
-              Join thousands of health-conscious Indians who trust HealthyMeal for their daily nutrition.
+              Join thousands of health-conscious Indians who trust HealthyMeal
+              for their daily nutrition.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
               <Button
@@ -202,7 +242,12 @@ export default function HowItWorksPage() {
               >
                 <Link href="/menu">Browse Menu</Link>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto bg-transparent"
+                asChild
+              >
                 <Link href="/subscriptions">View Plans</Link>
               </Button>
             </div>
@@ -212,5 +257,5 @@ export default function HowItWorksPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
